@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TechComponents - Site E-commerce de Composants IA & Robotique
 
-## Getting Started
+Site web moderne de comparaison de prix pour composants informatiques haute performance, spécialisé dans l'IA, le machine learning et la robotique.
 
-First, run the development server:
+## 🚀 Fonctionnalités
 
+- ✅ Design minimaliste et professionnel
+- ✅ Comparaison de prix en temps réel entre plusieurs marchands
+- ✅ Filtrage par catégories (RAM, CPU, GPU, Cartes mères, etc.)
+- ✅ Système de tri (prix, popularité, notes)
+- ✅ Pages de détails produits avec spécifications complètes
+- ✅ Responsive design (mobile, tablette, desktop)
+- ✅ API REST pour la gestion des prix
+- 🔄 Intégration avec APIs externes des marchands (en cours)
+
+## 🛠️ Technologies Utilisées
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/ui
+- **Icons**: Lucide React
+
+## 📦 Installation
+
+### Prérequis
+
+- Node.js 18+ et npm
+- Git (optionnel)
+
+### Étapes d'installation
+
+1. Cloner ou naviguer vers le projet:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd ~/Desktop/Projet-Dev/tech-components-store
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Installer les dépendances:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Créer un fichier `.env.local` à partir de `.env.example`:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Lancer le serveur de développement:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Ouvrir [http://localhost:3000](http://localhost:3000) dans votre navigateur
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Structure du Projet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+tech-components-store/
+├── app/                      # App Router de Next.js
+│   ├── api/                  # Routes API
+│   │   └── prices/          # API de gestion des prix
+│   ├── products/            # Pages produits
+│   │   ├── [id]/           # Page détail produit
+│   │   └── page.tsx        # Liste des produits
+│   ├── layout.tsx          # Layout principal
+│   ├── page.tsx            # Page d'accueil
+│   └── globals.css         # Styles globaux
+├── components/              # Composants React
+│   ├── ui/                 # Composants Shadcn/ui
+│   ├── Header.tsx          # En-tête du site
+│   ├── Footer.tsx          # Pied de page
+│   └── ProductCard.tsx     # Carte produit
+├── data/                    # Données mockées
+│   └── products.ts         # Liste des produits
+├── types/                   # Types TypeScript
+│   └── product.ts          # Types des produits
+└── lib/                     # Utilitaires
+    └── utils.ts            # Fonctions utilitaires
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔌 Intégration des APIs Externes
 
-## Deploy on Vercel
+Le site est préparé pour l'intégration avec les APIs des marchands. Voici les étapes:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 1. Choisir vos APIs
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Plusieurs options disponibles:
+
+#### Amazon Product Advertising API
+- **Documentation**: https://webservices.amazon.com/paapi5/documentation/
+- **Avantages**: Données officielles Amazon, fiables
+- **Limitations**: Nécessite un compte Associates, quotas stricts
+
+#### RapidAPI
+- **Documentation**: https://rapidapi.com/
+- **Avantages**: Accès à plusieurs APIs (Amazon, eBay, etc.) en un seul endroit
+- **APIs recommandées**:
+  - Real-Time Amazon Data API
+  - Product Data API
+  - Price Monitoring API
+
+#### Rainforest API
+- **Documentation**: https://www.rainforestapi.com/
+- **Avantages**: Scraping Amazon sans API officielle
+- **Idéal pour**: Récupérer des prix Amazon rapidement
+
+#### eBay API
+- **Documentation**: https://developer.ebay.com/
+- **Avantages**: Accès direct aux données eBay
+
+### 2. Configuration
+
+Ajouter vos clés API dans `.env.local`
+
+### 3. Implémentation
+
+Modifier le fichier `app/api/prices/route.ts` pour intégrer les vraies APIs.
+
+## 🎨 Personnalisation du Design
+
+Les couleurs et styles peuvent être modifiés dans `app/globals.css`.
+Les composants UI sont dans `components/ui/`.
+
+## 📊 API Endpoints
+
+### GET /api/prices
+Récupère les prix des produits.
+
+### POST /api/prices
+Met à jour les prix de plusieurs produits.
+
+## 🚀 Déploiement
+
+Déploiement recommandé sur Vercel:
+```bash
+npm run build
+vercel --prod
+```
+
+## 🔧 Scripts Disponibles
+
+```bash
+npm run dev          # Lancer en mode développement
+npm run build        # Créer le build de production
+npm run start        # Lancer le serveur de production
+npm run lint         # Vérifier le code avec ESLint
+```
+
+## 📝 Prochaines Étapes
+
+- [ ] Implémenter les vraies APIs des marchands
+- [ ] Ajouter un système d'authentification utilisateur
+- [ ] Créer un système de favoris
+- [ ] Ajouter des alertes de prix
+- [ ] Implémenter un historique de prix
+
+## 📄 Licence
+
+MIT License - Libre d'utilisation et de modification.
+
+---
+
+**Développé avec ❤️ par Claude Code**

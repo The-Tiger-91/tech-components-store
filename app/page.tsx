@@ -1,65 +1,168 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import ProductCard from '@/components/ProductCard';
+import { categories, products } from '@/data/products';
+import { ArrowRight, TrendingUp, Shield, Zap } from 'lucide-react';
 
 export default function Home() {
+  // Featured products - products with best savings or ratings
+  const featuredProducts = products.slice(0, 4);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 to-background py-20 sm:py-32">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge className="mb-4" variant="secondary">
+              <TrendingUp className="mr-1 h-3 w-3" />
+              Prix mis à jour en temps réel
+            </Badge>
+            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl">
+              Composants IA & Robotique au{' '}
+              <span className="text-primary">Meilleur Prix</span>
+            </h1>
+            <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
+              Comparez instantanément les prix de centaines de composants informatiques haute performance pour vos projets d'intelligence artificielle et de robotique.
+            </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+              <Button size="lg" asChild>
+                <Link href="/products">
+                  Explorer les produits
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/about">En savoir plus</Link>
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Features */}
+      <section className="border-y bg-muted/30 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-primary/10 p-3">
+                <Zap className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="mb-1 font-semibold">Prix en Temps Réel</h3>
+                <p className="text-sm text-muted-foreground">
+                  Comparaison instantanée des prix de tous les grands marchands
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-primary/10 p-3">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="mb-1 font-semibold">Vendeurs Vérifiés</h3>
+                <p className="text-sm text-muted-foreground">
+                  Seulement des marchands de confiance et certifiés
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-primary/10 p-3">
+                <TrendingUp className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="mb-1 font-semibold">Meilleures Offres</h3>
+                <p className="text-sm text-muted-foreground">
+                  Économisez jusqu'à 30% sur vos achats de composants
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Categories */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold">Explorez par Catégorie</h2>
+            <p className="text-muted-foreground">
+              Trouvez exactement ce dont vous avez besoin pour votre projet
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => (
+              <Link key={category.id} href={`/products?category=${category.id}`}>
+                <Card className="h-full transition-all hover:shadow-lg">
+                  <CardHeader>
+                    <div className="mb-2 text-4xl">{category.icon}</div>
+                    <CardTitle>{category.name}</CardTitle>
+                    <CardDescription>{category.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      {category.productCount} produits disponibles
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4">
+          <div className="mb-12 flex items-center justify-between">
+            <div>
+              <h2 className="mb-2 text-3xl font-bold">Produits Vedettes</h2>
+              <p className="text-muted-foreground">
+                Les meilleures offres du moment
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/products">
+                Voir tout
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <Card className="border-2">
+            <CardHeader className="text-center">
+              <CardTitle className="text-3xl">
+                Prêt à économiser sur vos composants ?
+              </CardTitle>
+              <CardDescription className="text-base">
+                Rejoignez des milliers d'utilisateurs qui font confiance à TechComponents pour leurs achats
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <Button size="lg" asChild>
+                <Link href="/products">
+                  Commencer maintenant
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 }
