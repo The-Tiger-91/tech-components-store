@@ -3,12 +3,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/ProductCard';
+import ComparisonTable from '@/components/ComparisonTable';
 import { categories, products } from '@/data/products';
 import { ArrowRight, TrendingUp, Shield, Zap } from 'lucide-react';
 
 export default function Home() {
   // Featured products - products with best savings or ratings
   const featuredProducts = products.slice(0, 4);
+
+  // Group products by category for comparison tables
+  const productsByCategory = categories.map(category => ({
+    category,
+    products: products.filter(p => p.category === category.id).slice(0, 3)
+  })).filter(group => group.products.length > 0);
 
   return (
     <div className="flex flex-col">
@@ -109,6 +116,29 @@ export default function Home() {
                   </CardContent>
                 </Card>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Tables by Category */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold">Tableaux de Comparaison par Catégorie</h2>
+            <p className="text-muted-foreground">
+              Comparez rapidement les specs et prix des meilleurs produits de chaque catégorie
+            </p>
+          </div>
+
+          <div className="space-y-16">
+            {productsByCategory.map((group) => (
+              <ComparisonTable
+                key={group.category.id}
+                products={group.products}
+                categoryName={group.category.name}
+                categoryIcon={group.category.icon}
+              />
             ))}
           </div>
         </div>
