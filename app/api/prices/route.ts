@@ -67,8 +67,8 @@ export async function GET(request: NextRequest) {
  * Cette fonction sera implémentée avec les vraies APIs des marchands
  */
 async function fetchRealTimePrices(
-  productName: string,
-  category: string
+  _productName: string,
+  _category: string
 ): Promise<ProductPrice[]> {
   // TODO: Implémenter l'intégration avec les APIs externes
   // Exemples d'APIs à intégrer:

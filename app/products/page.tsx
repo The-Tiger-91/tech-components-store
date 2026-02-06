@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
 import { products, categories } from '@/data/products';
@@ -18,9 +18,10 @@ import { SlidersHorizontal, X } from 'lucide-react';
 import { SortOption } from '@/types/product';
 import { getBestPrice } from '@/data/products';
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
+  const searchQuery = searchParams.get('search') || '';
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categoryParam ? [categoryParam] : []
@@ -31,6 +32,16 @@ export default function ProductsPage() {
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((p) =>
+        p.name.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query) ||
+        p.tags?.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
 
     // Filter by categories
     if (selectedCategories.length > 0) {
@@ -58,7 +69,7 @@ export default function ProductsPage() {
     });
 
     return filtered;
-  }, [selectedCategories, sortBy]);
+  }, [searchQuery, selectedCategories, sortBy]);
 
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -209,5 +220,13 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">Chargement...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }

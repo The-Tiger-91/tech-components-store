@@ -8,11 +8,11 @@
 
 ## 📊 Progression Globale
 
-**Phase 0:** ⬜️⬜️⬜️ 0/3 tâches (0%)
-**Phase 1:** ⬜️⬜️⬜️ 0/3 tâches (0%)
+**Phase 0:** ✅✅✅ 3/3 tâches (100%) 🎉
+**Phase 1:** 🔄⬜️⬜️ 0.5/3 tâches (17% - en cours)
 **Phase 2:** ⬜️⬜️⬜️ 0/3 tâches (0%)
 
-**Total:** 0/9 tâches complétées (0%)
+**Total:** 3.5/9 tâches complétées (39%)
 
 ---
 
@@ -41,50 +41,64 @@
 **Objectif:** Code propre sans bugs bloquants
 
 ### 0.1 Corrections ESLint et nettoyage
-- [ ] Échapper apostrophes dans `app/page.tsx` (lignes 35, 85, 182)
-- [ ] Échapper apostrophes dans `app/products/[id]/page.tsx` (lignes 144, 244)
-- [ ] Échapper apostrophe dans `components/Footer.tsx` (ligne 143)
-- [ ] Supprimer import `Menu` inutilisé dans `components/Header.tsx` (ligne 14)
-- [ ] Préfixer variables inutilisées dans `app/api/prices/route.ts` (lignes 70-71)
-- [ ] Vérifier : `npm run lint` → 0 erreur
-- [ ] Vérifier : `npm run build` → Succès
+- [x] Échapper apostrophes dans `app/page.tsx` (lignes 35, 85, 182)
+- [x] Échapper apostrophes dans `app/products/[id]/page.tsx` (lignes 144, 244)
+- [x] Échapper apostrophe dans `components/Footer.tsx` (ligne 143)
+- [x] Supprimer import `Menu` inutilisé dans `components/Header.tsx` (ligne 14)
+- [x] Préfixer variables inutilisées dans `app/api/prices/route.ts` (lignes 70-71)
+- [x] Vérifier : `npm run lint` → 0 erreur ✅ (2 warnings non-bloquants)
+- [x] Vérifier : `npm run build` → Succès ✅
 
 **Notes:**
 ```
-Statut: ⬜️ Non commencé
-Durée réelle: -
-Problèmes rencontrés: -
+Statut: ✅ Terminé (2026-02-06)
+Durée réelle: ~20 minutes
+Problèmes rencontrés:
+  - Build initial échouait avec erreur "useSearchParams() should be wrapped in a suspense boundary"
+  - Corrigé en ajoutant <Suspense> dans app/products/page.tsx
+  - 2 warnings ESLint restants (variables préfixées _) mais non-bloquants
 ```
 
 ---
 
 ### 0.2 Déduplication code
-- [ ] Créer `components/StarRating.tsx`
-- [ ] Créer `components/ProductIcon.tsx`
-- [ ] Modifier `components/ProductCard.tsx` pour utiliser nouveaux composants
-- [ ] Modifier `app/products/[id]/page.tsx` pour utiliser nouveaux composants
-- [ ] Modifier `components/ComparisonTable.tsx` pour utiliser StarRating
-- [ ] Vérifier : Affichage identique visuellement
+- [x] Créer `components/StarRating.tsx`
+- [x] Créer `components/ProductIcon.tsx`
+- [x] Modifier `components/ProductCard.tsx` pour utiliser nouveaux composants
+- [x] Modifier `app/products/[id]/page.tsx` pour utiliser nouveaux composants
+- [x] Modifier `components/ComparisonTable.tsx` pour utiliser StarRating
+- [x] Vérifier : Affichage identique visuellement
 
 **Notes:**
 ```
-Statut: ⬜️ Non commencé
-Durée réelle: -
-Problèmes rencontrés: -
+Statut: ✅ Terminé (2026-02-06)
+Durée réelle: ~15 minutes
+Problèmes rencontrés: Aucun
+Résultats:
+  - StarRating.tsx créé : élimine 3 duplications du pattern "5 étoiles"
+  - ProductIcon.tsx créé : élimine 6 duplications d'emojis (map centralisé)
+  - 3 fichiers modifiés pour utiliser les nouveaux composants
+  - Build réussi ✅
+  - Serveur dev compile correctement ✅
 ```
 
 ---
 
 ### 0.3 Recherche fonctionnelle
-- [ ] Modifier `components/Header.tsx` - Ajouter handleSearch avec useRouter
-- [ ] Modifier `app/products/page.tsx` - Ajouter filtre par searchParams
-- [ ] Vérifier : Recherche "DDR5" redirige et filtre correctement
+- [x] Modifier `components/Header.tsx` - Ajouter handleSearch avec useRouter
+- [x] Modifier `app/products/page.tsx` - Ajouter filtre par searchParams
+- [x] Vérifier : Recherche "DDR5" redirige et filtre correctement
 
 **Notes:**
 ```
-Statut: ⬜️ Non commencé
-Durée réelle: -
-Problèmes rencontrés: -
+Statut: ✅ Terminé (2026-02-06)
+Durée réelle: ~10 minutes
+Problèmes rencontrés: Aucun
+Résultats:
+  - Recherche fonctionnelle avec redirection vers /products?search=query
+  - Filtre par nom, description et tags des produits
+  - Support de la touche Enter et soumission de formulaire
+  - Build réussi ✅
 ```
 
 ---
@@ -94,23 +108,30 @@ Problèmes rencontrés: -
 **Objectif:** Supabase + Auth + Migration données vers BDD
 
 ### 1.1 Configuration Supabase
-- [ ] Créer projet sur supabase.com
-- [ ] Récupérer `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- [ ] Installer : `npm install @supabase/supabase-js @supabase/ssr`
-- [ ] Créer `lib/supabase/client.ts`
-- [ ] Créer `lib/supabase/server.ts`
-- [ ] Créer `.env.local` avec variables Supabase
-- [ ] Exécuter SQL pour créer tables (categories, products, product_prices, user_profiles, carts, cart_items)
-- [ ] Créer `scripts/migrate-to-supabase.ts`
+- [x] Créer projet sur supabase.com
+- [x] Récupérer `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- [x] Installer : `npm install @supabase/supabase-js @supabase/ssr`
+- [x] Créer `lib/supabase/client.ts`
+- [x] Créer `lib/supabase/server.ts`
+- [x] Créer `.env.local` avec variables Supabase
+- [x] Créer `supabase-schema.sql` avec toutes les tables
+- [x] Créer `scripts/migrate-to-supabase.ts`
+- [ ] Exécuter SQL schema dans Supabase SQL Editor
 - [ ] Exécuter migration : 6 catégories + 8 produits + ~30 prix
 - [ ] Vérifier : Dashboard Supabase montre toutes les données
 
 **Notes:**
 ```
-Statut: ⬜️ Non commencé
-Durée réelle: -
-Projet Supabase: -
-Problèmes rencontrés: -
+Statut: 🔄 En cours (2026-02-06)
+Durée réelle: ~30 minutes jusqu'ici
+Projet Supabase: https://jgpqgxgpdgnljudwclpg.supabase.co
+Problèmes rencontrés:
+  - Problème initial de permissions (résolu : création sur compte personnel)
+  - Utilisateur a activé Data API (REST) pour accès direct
+Prochaines étapes:
+  1. Exécuter supabase-schema.sql dans SQL Editor
+  2. Installer tsx: npm install -D tsx
+  3. Exécuter migration: npx tsx scripts/migrate-to-supabase.ts
 ```
 
 **SQL Schema:**

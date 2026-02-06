@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/ProductCard';
 import {
-  Star,
   ExternalLink,
   TrendingDown,
   Package,
@@ -15,6 +14,8 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { getBestPrice, getSavings } from '@/data/products';
+import StarRating from '@/components/StarRating';
+import ProductIcon from '@/components/ProductIcon';
 
 interface ProductPageProps {
   params: Promise<{
@@ -56,14 +57,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div>
           <Card className="overflow-hidden">
             <div className="relative aspect-square bg-muted flex items-center justify-center">
-              <div className="text-9xl">
-                {product.category === 'ram' && '💾'}
-                {product.category === 'motherboard' && '🔲'}
-                {product.category === 'cooling' && '❄️'}
-                {product.category === 'processor' && '⚡'}
-                {product.category === 'gpu' && '🎮'}
-                {product.category === 'storage' && '💿'}
-              </div>
+              <ProductIcon category={product.category} size="xl" />
             </div>
           </Card>
 
@@ -106,18 +100,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {product.averageRating && (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-5 w-5 ${
-                          i < Math.floor(product.averageRating!)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-muted'
-                        }`}
-                      />
-                    ))}
-                  </div>
+                  <StarRating
+                    rating={product.averageRating}
+                    size="lg"
+                    showCount={false}
+                  />
                   <span className="font-semibold">
                     {product.averageRating.toFixed(1)}
                   </span>
@@ -141,7 +128,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingDown className="h-5 w-5 text-primary" />
                   <span className="font-semibold text-primary">
-                    Économisez jusqu'à {savings.toFixed(2)}€
+                    Économisez jusqu&apos;à {savings.toFixed(2)}€
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -241,7 +228,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Voir l'offre
+                      Voir l&apos;offre
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </a>
                   </Button>

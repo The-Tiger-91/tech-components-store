@@ -140,7 +140,7 @@ export default function Footer() {
                 Politique de confidentialité
               </Link>
               <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                Conditions d'utilisation
+                Conditions d&apos;utilisation
               </Link>
               <Link href="/cookies" className="text-muted-foreground hover:text-foreground transition-colors">
                 Cookies

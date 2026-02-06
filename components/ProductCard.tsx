@@ -4,7 +4,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/types/product';
 import { getBestPrice, getSavings } from '@/data/products';
-import { Star, TrendingDown, ExternalLink } from 'lucide-react';
+import { TrendingDown, ExternalLink } from 'lucide-react';
+import StarRating from '@/components/StarRating';
+import ProductIcon from '@/components/ProductIcon';
 
 interface ProductCardProps {
   product: Product;
@@ -20,13 +22,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Link href={`/products/${product.id}`}>
           <div className="relative aspect-square overflow-hidden bg-muted">
             {/* Placeholder for product image */}
-            <div className="flex h-full w-full items-center justify-center text-6xl">
-              {product.category === 'ram' && '💾'}
-              {product.category === 'motherboard' && '🔲'}
-              {product.category === 'cooling' && '❄️'}
-              {product.category === 'processor' && '⚡'}
-              {product.category === 'gpu' && '🎮'}
-              {product.category === 'storage' && '💿'}
+            <div className="flex h-full w-full items-center justify-center">
+              <ProductIcon category={product.category} />
             </div>
 
             {/* Savings Badge */}
@@ -64,22 +61,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Rating */}
         {product.averageRating && (
-          <div className="flex items-center gap-1 mb-3">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-4 w-4 ${
-                    i < Math.floor(product.averageRating!)
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : 'text-muted'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              ({product.reviewCount})
-            </span>
+          <div className="mb-3">
+            <StarRating
+              rating={product.averageRating}
+              reviewCount={product.reviewCount}
+            />
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/ProductCard';
 import ComparisonTable from '@/components/ComparisonTable';
+import PCBuilder from '@/components/PCBuilder';
 import { categories, products } from '@/data/products';
 import { ArrowRight, TrendingUp, Shield, Zap } from 'lucide-react';
 
@@ -19,6 +20,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
+      {/* PC Builder Section */}
+      <PCBuilder />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 to-background py-20 sm:py-32">
         <div className="container mx-auto px-4">
@@ -32,7 +36,7 @@ export default function Home() {
               <span className="text-primary">Meilleur Prix</span>
             </h1>
             <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
-              Comparez instantanément les prix de centaines de composants informatiques haute performance pour vos projets d'intelligence artificielle et de robotique.
+              Comparez instantanément les prix de centaines de composants informatiques haute performance pour vos projets d&apos;intelligence artificielle et de robotique.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Button size="lg" asChild>
@@ -82,7 +86,7 @@ export default function Home() {
               <div>
                 <h3 className="mb-1 font-semibold">Meilleures Offres</h3>
                 <p className="text-sm text-muted-foreground">
-                  Économisez jusqu'à 30% sur vos achats de composants
+                  Économisez jusqu&apos;à 30% sur vos achats de composants
                 </p>
               </div>
             </div>
@@ -179,7 +183,7 @@ export default function Home() {
                 Prêt à économiser sur vos composants ?
               </CardTitle>
               <CardDescription className="text-base">
-                Rejoignez des milliers d'utilisateurs qui font confiance à TechComponents pour leurs achats
+                Rejoignez des milliers d&apos;utilisateurs qui font confiance à TechComponents pour leurs achats
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
