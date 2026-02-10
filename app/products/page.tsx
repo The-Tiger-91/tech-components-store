@@ -1,9 +1,9 @@
 'use client';
 
-import { Suspense, useState, useMemo } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
-import { products, categories } from '@/data/products';
+import { Product, Category } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -16,21 +16,59 @@ import {
 import { Card } from '@/components/ui/card';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { SortOption } from '@/types/product';
-import { getBestPrice } from '@/data/products';
+
+// Helper function to get best price
+function getBestPrice(product: Product) {
+  if (product.prices.length === 0) return null;
+  return product.prices.reduce((best, current) => {
+    const bestTotal = best.price + (best.shipping || 0);
+    const currentTotal = current.price + (current.shipping || 0);
+    return currentTotal < bestTotal ? current : best;
+  });
+}
 
 function ProductsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   const searchQuery = searchParams.get('search') || '';
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categoryParam ? [categoryParam] : []
   );
   const [sortBy, setSortBy] = useState<SortOption>('popular');
   const [showFilters, setShowFilters] = useState(true);
 
+  // Fetch products and categories from API
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/categories')
+        ]);
+
+        const productsData = await productsRes.json();
+        const categoriesData = await categoriesRes.json();
+
+        setProducts(productsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
+    if (!products.length) return [];
     let filtered = [...products];
 
     // Filter by search query
@@ -69,7 +107,7 @@ function ProductsContent() {
     });
 
     return filtered;
-  }, [searchQuery, selectedCategories, sortBy]);
+  }, [products, searchQuery, selectedCategories, sortBy]);
 
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -82,6 +120,16 @@ function ProductsContent() {
   const clearFilters = () => {
     setSelectedCategories([]);
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

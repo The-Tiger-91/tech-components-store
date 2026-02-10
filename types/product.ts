@@ -1,6 +1,7 @@
 export interface Product {
   id: string;
   name: string;
+  slug?: string;
   category: 'motherboard' | 'ram' | 'cooling' | 'processor' | 'gpu' | 'storage' | 'power-supply';
   description: string;
   specifications: {

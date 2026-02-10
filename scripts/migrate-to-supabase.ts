@@ -6,19 +6,24 @@
  * Make sure to install tsx first: npm install -D tsx
  */
 
+import { config } from 'dotenv';
+import { resolve } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { categories, products } from '../data/products';
 
-// Load environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Load environment variables from .env.local
+config({ path: resolve(process.cwd(), '.env.local') });
 
-if (!supabaseUrl || !supabaseKey) {
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
   console.error('❌ Missing Supabase credentials in .env.local');
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Use service role key for migration (bypasses RLS)
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function migrate() {
   console.log('🚀 Starting migration to Supabase...\n');

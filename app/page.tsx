@@ -5,11 +5,61 @@ import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/ProductCard';
 import ComparisonTable from '@/components/ComparisonTable';
 import PCBuilder from '@/components/PCBuilder';
-import { categories, products } from '@/data/products';
+import { Product, Category } from '@/types/product';
 import { ArrowRight, TrendingUp, Shield, Zap } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
 
-export default function Home() {
-  // Featured products - products with best savings or ratings
+export default async function Home() {
+  const supabase = await createClient();
+
+  // Fetch categories
+  const { data: categoriesData } = await supabase
+    .from('categories')
+    .select('*')
+    .order('name');
+
+  const categories: Category[] = categoriesData?.map((cat: any) => ({
+    id: cat.id,
+    name: cat.name,
+    description: cat.description,
+    icon: cat.icon,
+    productCount: cat.product_count,
+  })) || [];
+
+  // Fetch products
+  const { data: productsData } = await supabase
+    .from('products')
+    .select(`
+      *,
+      product_prices(*)
+    `)
+    .eq('in_stock', true)
+    .limit(20);
+
+  const products: Product[] = productsData?.map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    category: p.category_id,
+    description: p.description,
+    specifications: p.specifications,
+    image: p.image_url,
+    prices: p.product_prices?.map((price: any) => ({
+      merchant: price.merchant,
+      price: parseFloat(price.price),
+      currency: price.currency,
+      url: price.url,
+      shipping: parseFloat(price.shipping || 0),
+      availability: price.availability,
+      lastUpdated: new Date(price.last_updated),
+    })) || [],
+    averageRating: p.average_rating,
+    reviewCount: p.review_count,
+    inStock: p.in_stock,
+    tags: p.tags,
+  })) || [];
+
+  // Featured products - first 4 products
   const featuredProducts = products.slice(0, 4);
 
   // Group products by category for comparison tables

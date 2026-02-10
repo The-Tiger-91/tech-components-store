@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { products } from '@/data/products';
+import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,9 +13,26 @@ import {
   ShieldCheck,
   ChevronLeft,
 } from 'lucide-react';
-import { getBestPrice, getSavings } from '@/data/products';
 import StarRating from '@/components/StarRating';
 import ProductIcon from '@/components/ProductIcon';
+
+// Helper functions
+function getBestPrice(product: Product) {
+  if (product.prices.length === 0) return null;
+  return product.prices.reduce((best, current) => {
+    const bestTotal = best.price + (best.shipping || 0);
+    const currentTotal = current.price + (current.shipping || 0);
+    return currentTotal < bestTotal ? current : best;
+  });
+}
+
+function getSavings(product: Product) {
+  if (product.prices.length < 2) return 0;
+  const prices = product.prices.map(p => p.price + (p.shipping || 0));
+  const max = Math.max(...prices);
+  const min = Math.min(...prices);
+  return max - min;
+}
 
 interface ProductPageProps {
   params: Promise<{
@@ -25,19 +42,85 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const product = products.find((p) => p.id === id);
 
-  if (!product) {
+  // Fetch product directly from Supabase (Server Component)
+  const { createClient } = await import('@/lib/supabase/server');
+  const supabase = await createClient();
+
+  const { data: productData, error: productError } = await supabase
+    .from('products')
+    .select(`
+      *,
+      category:categories(id, name, icon, description),
+      product_prices(*)
+    `)
+    .eq('id', id)
+    .single();
+
+  if (productError || !productData) {
     notFound();
   }
+
+  // Transform product data
+  const product: Product = {
+    id: productData.id,
+    name: productData.name,
+    slug: productData.slug,
+    category: productData.category_id,
+    description: productData.description,
+    specifications: productData.specifications,
+    image: productData.image_url,
+    prices: productData.product_prices?.map((price: any) => ({
+      merchant: price.merchant,
+      price: parseFloat(price.price),
+      currency: price.currency,
+      url: price.url,
+      shipping: parseFloat(price.shipping || 0),
+      availability: price.availability,
+      lastUpdated: new Date(price.last_updated),
+    })) || [],
+    averageRating: productData.average_rating,
+    reviewCount: productData.review_count,
+    inStock: productData.in_stock,
+    tags: productData.tags,
+  };
 
   const bestPrice = getBestPrice(product);
   const savings = getSavings(product);
 
-  // Related products (same category)
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  // Fetch related products (same category)
+  const { data: relatedData } = await supabase
+    .from('products')
+    .select(`
+      *,
+      product_prices(*)
+    `)
+    .eq('category_id', productData.category_id)
+    .neq('id', id)
+    .limit(4);
+
+  const relatedProducts: Product[] = relatedData?.map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    category: p.category_id,
+    description: p.description,
+    specifications: p.specifications,
+    image: p.image_url,
+    prices: p.product_prices?.map((price: any) => ({
+      merchant: price.merchant,
+      price: parseFloat(price.price),
+      currency: price.currency,
+      url: price.url,
+      shipping: parseFloat(price.shipping || 0),
+      availability: price.availability,
+      lastUpdated: new Date(price.last_updated),
+    })) || [],
+    averageRating: p.average_rating,
+    reviewCount: p.review_count,
+    inStock: p.in_stock,
+    tags: p.tags,
+  })) || [];
 
   return (
     <div className="container mx-auto px-4 py-8">
