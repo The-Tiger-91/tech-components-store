@@ -3,7 +3,7 @@ import { BaseScraper } from './BaseScraper';
 import { ScrapedProduct } from './types';
 
 /**
- * Scraper pour LDLC.com
+ * Scraper pour LDLC.com - Version robuste
  */
 export class LDLCScraper extends BaseScraper {
   async scrapeProduct(query: string): Promise<ScrapedProduct[]> {
@@ -13,51 +13,83 @@ export class LDLCScraper extends BaseScraper {
     const $ = cheerio.load(response.data);
     const products: ScrapedProduct[] = [];
 
-    // Sélecteur pour les résultats LDLC
-    $('li.pdt-item').each((_, element) => {
-      try {
-        const $item = $(element);
+    // Essayer plusieurs sélecteurs possibles (le HTML change souvent)
+    const productSelectors = [
+      'li.pdt-item',
+      '.listing-product',
+      'article[data-id]',
+      '.product-item'
+    ];
 
-        const title = $item.find('.title-3').text().trim();
-        const priceText = $item.find('.price').text().trim();
-        const price = parseFloat(priceText.replace('€', '').replace(',', '.').replace(/\s/g, ''));
+    let foundProducts = false;
 
-        if (!title || !price || isNaN(price)) return;
+    for (const selector of productSelectors) {
+      const $items = $(selector);
+      if ($items.length > 0) {
+        foundProducts = true;
 
-        const productLink = $item.find('a.pdt-item-link').attr('href');
-        const productUrl = productLink ? `https://www.ldlc.com${productLink}` : '';
-        const affiliateUrl = this.generateAffiliateUrl(productUrl);
+        $items.each((_, element) => {
+          try {
+            const $item = $(element);
 
-        const imageUrl = $item.find('img.lazy').attr('data-src') ||
-                        $item.find('img').attr('src');
+            // Chercher le titre avec plusieurs sélecteurs
+            const title = $item.find('.title-3, .pdt-desc, h3, .product-name').first().text().trim();
 
-        // Extraire l'ID du produit depuis l'URL
-        const productId = productLink?.match(/\/fiche\/PB(\d+)\.html/)?.[1] || '';
+            // Chercher le prix avec plusieurs sélecteurs et formattages
+            const priceText = $item.find('.price, .prix, [class*="price"]').first().text().trim();
+            const cleanPrice = priceText
+              .replace(/€/g, '')
+              .replace(/EUR/g, '')
+              .replace(/\s/g, '')
+              .replace(',', '.');
+            const price = parseFloat(cleanPrice);
 
-        // Vérifier la disponibilité
-        const availability = $item.find('.stock').text().includes('En stock')
-          ? 'in-stock' as const
-          : 'out-of-stock' as const;
+            if (!title || !price || isNaN(price)) return;
 
-        products.push({
-          externalId: `ldlc-${productId}`,
-          name: title,
-          imageUrl: imageUrl || undefined,
-          price: {
-            merchant: 'LDLC',
-            price: price,
-            currency: 'EUR',
-            url: productUrl,
-            affiliateUrl: affiliateUrl,
-            shipping: price >= 100 ? 0 : 5.99, // Frais de port LDLC
-            availability: availability,
-            lastUpdated: new Date(),
-          },
+            // Chercher le lien produit
+            const productLink = $item.find('a').first().attr('href');
+            const productUrl = productLink?.startsWith('http')
+              ? productLink
+              : productLink ? `https://www.ldlc.com${productLink}` : '';
+
+            const affiliateUrl = this.generateAffiliateUrl(productUrl);
+
+            // Chercher l'image
+            const imageUrl = $item.find('img').attr('data-src') ||
+                            $item.find('img').attr('src');
+
+            // Extraire l'ID
+            const productId = productLink?.match(/PB(\d+)/)?.[1] ||
+                            $item.attr('data-id') ||
+                            Date.now().toString();
+
+            products.push({
+              externalId: `ldlc-${productId}`,
+              name: title,
+              imageUrl: imageUrl || undefined,
+              price: {
+                merchant: 'LDLC',
+                price: price,
+                currency: 'EUR',
+                url: productUrl,
+                affiliateUrl: affiliateUrl,
+                shipping: price >= 100 ? 0 : 5.99,
+                availability: 'in-stock',
+                lastUpdated: new Date(),
+              },
+            });
+          } catch (error) {
+            // Continue si un produit échoue
+          }
         });
-      } catch (error) {
-        console.error('Erreur parsing produit LDLC:', error);
+
+        break; // On a trouvé des produits, pas besoin d'essayer les autres sélecteurs
       }
-    });
+    }
+
+    if (!foundProducts) {
+      console.warn('LDLC: Aucun produit trouvé avec les sélecteurs connus');
+    }
 
     return products.slice(0, 10);
   }

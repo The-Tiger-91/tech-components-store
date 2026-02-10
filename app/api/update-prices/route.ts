@@ -44,25 +44,51 @@ export async function POST(request: NextRequest) {
       const product = result.products[0];
 
       // 3. Upsert (insert or update) dans product_prices
-      const { data, error } = await supabase
+      const priceData: any = {
+        product_id: productId,
+        merchant: product.price.merchant,
+        price: product.price.price.toString(),
+        currency: product.price.currency,
+        url: product.price.url,
+        shipping: product.price.shipping.toString(),
+        availability: product.price.availability,
+        last_updated: new Date().toISOString(),
+      };
+
+      // Add affiliate_url only if it's provided (column may not exist yet)
+      if (product.price.affiliateUrl) {
+        priceData.affiliate_url = product.price.affiliateUrl;
+      }
+
+      // Check if price already exists for this product + merchant
+      const { data: existing } = await supabase
         .from('product_prices')
-        .upsert(
-          {
-            product_id: productId,
-            merchant: product.price.merchant,
-            price: product.price.price.toString(),
-            currency: product.price.currency,
-            url: product.price.url,
-            affiliate_url: product.price.affiliateUrl || product.price.url,
-            shipping: product.price.shipping.toString(),
-            availability: product.price.availability,
-            last_updated: new Date().toISOString(),
-          },
-          {
-            onConflict: 'product_id,merchant',
-          }
-        )
-        .select();
+        .select('id')
+        .eq('product_id', productId)
+        .eq('merchant', product.price.merchant)
+        .single();
+
+      let data, error;
+
+      if (existing) {
+        // Update existing price
+        const result = await supabase
+          .from('product_prices')
+          .update(priceData)
+          .eq('product_id', productId)
+          .eq('merchant', product.price.merchant)
+          .select();
+        data = result.data;
+        error = result.error;
+      } else {
+        // Insert new price
+        const result = await supabase
+          .from('product_prices')
+          .insert(priceData)
+          .select();
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         errors.push(`${result.merchant}: ${error.message}`);
